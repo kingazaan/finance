@@ -17,20 +17,34 @@ soup = BeautifulSoup(page.content, 'html.parser')
 valuation = soup.find_all(class_="Ta(c) Pstart(10px) Miw(60px) Miw(80px)--pnclg Bgc($lv1BgColor) fi-row:h_Bgc($hoverBgColor)")
 financials = soup.find_all(class_="Fw(500) Ta(end) Pstart(10px) Miw(60px)")
 
+while financials == []:
+        print("That company doesn't exist! Please try again!")
+        ticker = input("Please enter your stock ticker: ")
+        page = requests.get("https://finance.yahoo.com/quote/" + ticker + "/key-statistics?p=" + ticker)
+        soup = BeautifulSoup(page.content, 'html.parser')
+        valuation = soup.find_all(class_="Ta(c) Pstart(10px) Miw(60px) Miw(80px)--pnclg Bgc($lv1BgColor) fi-row:h_Bgc($hoverBgColor)")
+        financials = soup.find_all(class_="Fw(500) Ta(end) Pstart(10px) Miw(60px)")
+
 # saving all the valuation/financial metrics onto different variables
 name = soup.find(class_="D(ib) Fz(18px)").get_text()
 price = soup.find(class_="Trsdu(0.3s) Fw(b) Fz(36px) Mb(-4px) D(ib)").get_text()
 market_cap = valuation[0].get_text()
 enterprise_value = valuation[1].get_text()
-trailing_PE = float(valuation[2].get_text())
-forward_PE = float(valuation[3].get_text())  # shows up as "N/A" often, need to figure out what to do with it
-Peg = float(valuation[4].get_text())
-price_sales = float(valuation[5].get_text())
-price_book = float(valuation[6].get_text())
-Ev_Revenue = float(valuation[7].get_text())
-Ev_EBITDA = float(valuation[8].get_text())
-current__ratio = float(financials[46].get_text())
-debt_equity = float(financials[45].get_text())
+trailing_PE = (float(valuation[2].get_text()) if valuation[2].get_text() != "N/A" else 0)
+forward_PE = (float(valuation[3].get_text()) if valuation[3].get_text() != "N/A" else 0)
+Peg = (float(valuation[4].get_text()) if valuation[4].get_text() != "N/A" else 0)
+price_sales = (float(valuation[5].get_text()) if valuation[5].get_text() != "N/A" else 0)
+price_book = (float(valuation[6].get_text()) if valuation[6].get_text() != "N/A" else 0)
+Ev_Revenue = (float(valuation[7].get_text()) if valuation[7].get_text() != "N/A" else 0)
+Ev_EBITDA = (float(valuation[8].get_text()) if valuation[8].get_text() != "N/A" else 0)
+current_ratio = (float(financials[46].get_text()) if financials[46].get_text() != "N/A" else 0)
+# quick ratio
+# debt to ebitda
+# ROE
+# ROIC
+# Operating Margin
+# Dividend growth
+debt_equity = (float(financials[45].get_text()) if financials[45].get_text() != "N/A" else 0)
 
 # Determine market cap of the company
 letter1 = market_cap[-1]
